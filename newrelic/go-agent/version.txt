@@ -5,7 +5,7 @@ Go 1.3 or later
 github.com/newrelic/go-agent
 
 # refactored by unixman as:
-github.com/unix-world/go-newrelic-go-agent
+github.com/unix-world/go-modules/newrelic/go-agent
 
 # fix by unixman
 	* added: internal/sysinfo/memtotal_openbsd.go @ from mainstream

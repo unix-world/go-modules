@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/newrelic/go-agent/internal/logger"
-	"github.com/newrelic/go-agent/internal/sysinfo"
+	"github.com/unix-world/go-modules/newrelic/go-agent/internal/logger"
+	"github.com/unix-world/go-modules/newrelic/go-agent/internal/sysinfo"
 )
 
 // Sample is a system/runtime snapshot.

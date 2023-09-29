@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/newrelic/go-agent/internal"
-	"github.com/newrelic/go-agent/internal/logger"
+	"github.com/unix-world/go-modules/newrelic/go-agent/internal"
+	"github.com/unix-world/go-modules/newrelic/go-agent/internal/logger"
 )
 
 var (

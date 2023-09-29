@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/newrelic/go-agent/internal/cat"
+	"github.com/unix-world/go-modules/newrelic/go-agent/internal/cat"
 )
 
 // Bitfield values for the TxnCrossProcess.Type field.

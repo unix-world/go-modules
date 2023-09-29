@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/newrelic/go-agent/internal/jsonx"
+	"github.com/unix-world/go-modules/newrelic/go-agent/internal/jsonx"
 )
 
 // AppDataHeader represents a decoded AppData header.
