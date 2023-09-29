@@ -1,4 +1,4 @@
-module github.com/unix-world/go-modules/tree/main/sec51/twofactor
+module github.com/unix-world/go-modules/sec51/twofactor
 
 go 1.19
 
