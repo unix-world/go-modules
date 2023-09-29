@@ -60,11 +60,6 @@ func (otp *Totp) synchronizeCounter(offset int) {
 	otp.clientOffset = offset
 }
 
-// Label returns the combination of issuer:account string
-func (otp *Totp) label() string {
-	return fmt.Sprintf("%s:%s", url.QueryEscape(otp.issuer), otp.account)
-}
-
 // Counter returns the TOTP's 8-byte counter as unsigned 64-bit integer.
 func (otp *Totp) getIntCounter() uint64 {
 	return bigendian.FromUint64(otp.counter)
@@ -293,7 +288,7 @@ func (otp *Totp) url() (string, error) {
 	v := url.Values{}
 	u.Scheme = "otpauth"
 	u.Host = "totp"
-	u.Path = otp.label()
+	u.Path = otp.account
 	v.Add("secret", secret)
 	v.Add("counter", fmt.Sprintf("%d", otp.getIntCounter()))
 	v.Add("issuer", otp.issuer)
