@@ -1,0 +1,11 @@
+@head.20180911.20180916
+
+Go 1.6 or later
+
+github.com/sec51/twofactor
+
+# refactored by unixman as:
+github.com/unix-world/go-modules/sec51/twofactor
+
+# fix by unixman:
+	* totp.go @ from syreclabs/twofactor : use just account for label # 9574e2570ce347a6c3f3196e1d2187755f8574be # 20180916
