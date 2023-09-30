@@ -1,0 +1,79 @@
+# github.com/MichaelTJones/walk v0.0.0-20161122175330-4748e29d5718
+## explicit
+github.com/MichaelTJones/walk
+# github.com/davecgh/go-spew v1.1.1
+## explicit
+github.com/davecgh/go-spew/spew
+# github.com/garyburd/redigo v1.6.4
+## explicit; go 1.17
+github.com/garyburd/redigo/internal
+github.com/garyburd/redigo/redis
+# github.com/howeyc/gopass v0.0.0-20210920133722-c8aef6fb66ef
+## explicit
+github.com/howeyc/gopass
+# github.com/jmoiron/sqlx v1.3.5
+## explicit; go 1.10
+github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/reflectx
+# github.com/lib/pq v1.10.9
+## explicit; go 1.13
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/mattn/go-colorable v0.1.13
+## explicit; go 1.15
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.19
+## explicit; go 1.15
+github.com/mattn/go-isatty
+# github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
+## explicit
+github.com/mgutz/ansi
+# github.com/mgutz/jo v1.1.0
+## explicit
+github.com/mgutz/jo/v1
+# github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab
+## explicit
+github.com/mgutz/logxi/v1
+# github.com/mgutz/minimist v0.0.0-20151219120022-39eb8cf573ca
+## explicit
+github.com/mgutz/minimist
+# github.com/mgutz/str v1.2.0
+## explicit
+github.com/mgutz/str
+# github.com/mgutz/to v1.0.0
+## explicit
+github.com/mgutz/to
+# github.com/nozzle/throttler v0.0.0-20180817012639-2ea982251481
+## explicit
+github.com/nozzle/throttler
+# github.com/pmezard/go-difflib v1.0.0
+## explicit
+github.com/pmezard/go-difflib/difflib
+# github.com/pmylund/go-cache v2.1.0+incompatible
+## explicit
+github.com/pmylund/go-cache
+# github.com/stretchr/testify v1.8.4
+## explicit; go 1.20
+# golang.org/x/crypto v0.13.0
+## explicit; go 1.17
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/sys v0.12.0
+## explicit; go 1.17
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/plan9
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/term v0.12.0
+## explicit; go 1.17
+golang.org/x/term
+# gopkg.in/godo.v2 v2.0.9
+## explicit
+gopkg.in/godo.v2
+gopkg.in/godo.v2/glob
+gopkg.in/godo.v2/util
+gopkg.in/godo.v2/watcher
+gopkg.in/godo.v2/watcher/fswatch
+# gopkg.in/stretchr/testify.v1 v1.2.2
+## explicit
+gopkg.in/stretchr/testify.v1/assert
