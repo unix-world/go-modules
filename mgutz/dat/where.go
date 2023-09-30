@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"gopkg.in/mgutz/dat.v1/common"
+	"github.com/syreclabs/dat/common"
 )
 
 // Eq is a map column -> value pairs which must be matched in a query
@@ -18,8 +18,8 @@ type whereFragment struct {
 	EqualityMap map[string]interface{}
 }
 
-func newWhereFragment(whereSQLOrMap interface{}, args []interface{}) *whereFragment {
-	switch pred := whereSQLOrMap.(type) {
+func newWhereFragment(whereSqlOrMap interface{}, args []interface{}) *whereFragment {
+	switch pred := whereSqlOrMap.(type) {
 	case Expression:
 		return &whereFragment{Condition: pred.Sql, Values: pred.Args}
 	case *Expression:
@@ -72,27 +72,16 @@ func writeScopeCondition(buf common.BufferWriter, f *whereFragment, args *[]inte
 	}
 }
 
-func writeAndFragmentsToSQL(buf common.BufferWriter, fragments []*whereFragment, args *[]interface{}, pos *int64) {
-	writeFragmentsToSQL(" AND ", true, buf, fragments, args, pos)
-}
-
-func writeCommaFragmentsToSQL(buf common.BufferWriter, fragments []*whereFragment, args *[]interface{}, pos *int64) {
-	writeFragmentsToSQL(", ", false, buf, fragments, args, pos)
-}
-
 // Invariant: only called when len(fragments) > 0
-func writeFragmentsToSQL(delimiter string, addParens bool, buf common.BufferWriter, fragments []*whereFragment, args *[]interface{}, pos *int64) {
+func writeWhereFragmentsToSql(buf common.BufferWriter, fragments []*whereFragment, args *[]interface{}, pos *int64) {
 	hasConditions := false
 	for _, f := range fragments {
 		if f.Condition != "" {
 			if hasConditions {
-				buf.WriteString(delimiter)
+				buf.WriteString(" AND (")
 			} else {
-				hasConditions = true
-			}
-
-			if addParens {
 				buf.WriteRune('(')
+				hasConditions = true
 			}
 
 			if len(f.Values) > 0 {
@@ -103,18 +92,16 @@ func writeFragmentsToSQL(delimiter string, addParens bool, buf common.BufferWrit
 			} else {
 				buf.WriteString(f.Condition)
 			}
-			if addParens {
-				buf.WriteRune(')')
-			}
+			buf.WriteRune(')')
 		} else if f.EqualityMap != nil {
-			hasConditions = writeEqualityMapToSQL(buf, f.EqualityMap, args, hasConditions, pos)
+			hasConditions = writeEqualityMapToSql(buf, f.EqualityMap, args, hasConditions, pos)
 		} else {
 			panic("invalid equality map")
 		}
 	}
 }
 
-func writeEqualityMapToSQL(buf common.BufferWriter, eq map[string]interface{}, args *[]interface{}, anyConditions bool, pos *int64) bool {
+func writeEqualityMapToSql(buf common.BufferWriter, eq map[string]interface{}, args *[]interface{}, anyConditions bool, pos *int64) bool {
 	for k, v := range eq {
 		if v == nil {
 			anyConditions = writeWhereCondition(buf, k, " IS NULL", anyConditions)

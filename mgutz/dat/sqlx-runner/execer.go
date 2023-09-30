@@ -2,11 +2,10 @@ package runner
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"gopkg.in/mgutz/dat.v1"
+	"github.com/syreclabs/dat"
 )
 
 // Execer executes queries against a database.
@@ -17,16 +16,7 @@ type Execer struct {
 	cacheID         string
 	cacheTTL        time.Duration
 	cacheInvalidate bool
-
-	// timeout is the time to wait for a query before cancelling it, 0 means forever
-	timeout time.Duration
-
-	// uuid is prepended into the SQL for the query to be searched
-	// in pg_stat_activity, used by timeout logic
-	queryID string
 }
-
-const queryIDPrefix = "--dat:qid="
 
 // NewExecer creates a new instance of Execer.
 func NewExecer(database database, builder dat.Builder) *Execer {
@@ -44,60 +34,9 @@ func (ex *Execer) Cache(id string, ttl time.Duration, invalidate bool) dat.Exece
 	return ex
 }
 
-// Timeout sets the timeout for current query.
-func (ex *Execer) Timeout(timeout time.Duration) dat.Execer {
-	ex.timeout = timeout
-	if timeout > 0 {
-		ex.queryID = uuid()
-	} else {
-		ex.queryID = ""
-	}
-	return ex
-}
-
-func datQueryID(id string) string {
-	return fmt.Sprintf("--dat:qid=%s", id)
-}
-
-func prependDatQueryID(sql string, id string) string {
-	return fmt.Sprintf("%s\n%s", datQueryID(id), sql)
-}
-
-// Cancel cancels last query with a queryID. If queryID was not set then
-// ErrInvalidOperation is returned.
-func (ex *Execer) Cancel() error {
-	if ex.queryID == "" {
-		return dat.ErrInvalidOperation
-	}
-
-	q := fmt.Sprintf(`
-	SELECT pg_cancel_backend(psa.pid)
-	FROM (
-		SELECT pid
-		FROM pg_stat_activity
-		WHERE query
-		LIKE '%s%%'
-	) psa`, datQueryID(ex.queryID))
-
-	_, err := ex.execSQL(q, nil)
-	if err != nil {
-		logger.Error("While trying to cancel a query", err)
-	}
-	return dat.ErrTimedout
-}
-
-// Interpolate tells the associated builder to interpolate itself.
-func (ex *Execer) Interpolate() (string, []interface{}, error) {
-	sql, args, err := ex.builder.Interpolate()
-	if ex.timeout > 0 {
-		sql = prependDatQueryID(sql, ex.queryID)
-	}
-	return sql, args, err
-}
-
 // Exec executes a builder's query.
 func (ex *Execer) Exec() (*dat.Result, error) {
-	res, err := ex.exec()
+	res, err := exec(ex)
 	if err != nil {
 		return nil, err
 	}
@@ -110,62 +49,59 @@ func (ex *Execer) Exec() (*dat.Result, error) {
 
 // Queryx executes builder's query and returns rows.
 func (ex *Execer) Queryx() (*sqlx.Rows, error) {
-	return ex.query()
+	return query(ex)
 }
 
 // QueryScalar executes builder's query and scans returned row into destinations.
 func (ex *Execer) QueryScalar(destinations ...interface{}) error {
-	return ex.queryScalar(destinations...)
+	return queryScalar(ex, destinations...)
 }
 
 // QuerySlice executes builder's query and builds a slice of values from each row, where
 // each row only has one column.
 func (ex *Execer) QuerySlice(dest interface{}) error {
-	return ex.querySlice(dest)
+	return querySlice(ex, dest)
 }
 
 // QueryStruct executes builders' query and scans the result row into dest.
 func (ex *Execer) QueryStruct(dest interface{}) error {
 	if _, ok := ex.builder.(*dat.SelectDocBuilder); ok {
-		err := ex.queryJSONStruct(dest)
+		err := queryJSONStruct(ex, dest)
 		return err
 	}
-	return ex.queryStruct(dest)
+	return queryStruct(ex, dest)
 }
 
 // QueryStructs executes builders' query and scans each row as an item in a slice of structs.
 func (ex *Execer) QueryStructs(dest interface{}) error {
 	if _, ok := ex.builder.(*dat.SelectDocBuilder); ok {
-		err := ex.queryJSONStructs(dest)
+		err := queryJSONStructs(ex, dest)
 		return err
 	}
 
-	return ex.queryStructs(dest)
+	return queryStructs(ex, dest)
 }
 
 // QueryObject wraps the builder's query within a `to_json` then executes and unmarshals
 // the result into dest.
 func (ex *Execer) QueryObject(dest interface{}) error {
 	if _, ok := ex.builder.(*dat.SelectDocBuilder); ok {
-		b, err := ex.queryJSONBlob(false)
+		b, err := queryJSONBlob(ex, false)
 		if err != nil {
 			return err
-		}
-		if b == nil {
-			return nil
 		}
 		return json.Unmarshal(b, dest)
 	}
 
-	return ex.queryObject(dest)
+	return queryObject(ex, dest)
 }
 
 // QueryJSON wraps the builder's query within a `to_json` then executes and returns
 // the JSON []byte representation.
 func (ex *Execer) QueryJSON() ([]byte, error) {
 	if _, ok := ex.builder.(*dat.SelectDocBuilder); ok {
-		return ex.queryJSONBlob(false)
+		return queryJSONBlob(ex, false)
 	}
 
-	return ex.queryJSON()
+	return queryJSON(ex)
 }

@@ -40,6 +40,8 @@ func isFloat(k reflect.Kind) bool {
 //   - booleans
 //   - times
 var typeOfTime = reflect.TypeOf(time.Time{})
+var typeOfUnsafeString = reflect.TypeOf(UnsafeString(""))
+var typeOfBytes = reflect.TypeOf([]byte{})
 
 // Interpolate takes a SQL string with placeholders and a list of arguments to
 // replace them with. Returns a blank string and error if the number of placeholders
@@ -104,71 +106,51 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 
 		// mark any arguments not handled with a new placeholder
 		// and the arg to the new arguments slice
-		var passthroughArg = func(values ...interface{}) {
+		var passthroughArg = func() {
 			newPlaceholderIndex++
-			newArgs = append(newArgs, values...)
+			newArgs = append(newArgs, v)
 			writePlaceholder(buf, newPlaceholderIndex)
-		}
-
-		if val, ok := v.(UnsafeString); ok {
-			buf.WriteString(string(val))
-			return nil
-		} else if _, ok := v.(JSON); ok {
-			valueOfV := reflect.ValueOf(v)
-			if valueOfV.IsNil() {
-				buf.WriteString("NULL")
-				return nil
-			}
-
-			passthroughArg(v)
-			return nil
-		} else if valuer, ok := v.(Expressioner); ok {
-			valueOfV := reflect.ValueOf(v)
-			if valueOfV.IsNil() {
-				buf.WriteString("NULL")
-				return nil
-			}
-
-			s, args, err := valuer.Expression()
-			if err != nil {
-				return err
-			}
-
-			buf.WriteString(s)
-			if len(args) > 0 {
-				passthroughArg(args...)
-			}
-			return nil
-		} else if valuer, ok := v.(Interpolator); ok {
-			valueOfV := reflect.ValueOf(v)
-			if valueOfV.IsNil() {
-				buf.WriteString("NULL")
-				return nil
-			}
-
-			s, err := valuer.Interpolate()
-			if err != nil {
-				return err
-			}
-			Dialect.WriteStringLiteral(buf, s)
-			return nil
-		} else if valuer, ok := v.(driver.Valuer); ok {
-			val, err := valuer.Value()
-			if err != nil {
-				return err
-			}
-			v = val
 		}
 
 		valueOfV := reflect.ValueOf(v)
 		kindOfV := valueOfV.Kind()
+
+		// check for nil pointers
+		if kindOfV == reflect.Ptr {
+			if valueOfV.IsNil() {
+				buf.WriteString("NULL")
+				return nil
+			}
+		}
 
 		if v == nil {
 			buf.WriteString("NULL")
 			return nil
 		}
 
-		// Dereference pointer values
+		if val, ok := v.(UnsafeString); ok {
+			buf.WriteString(string(val))
+			return nil
+		} else if _, ok := v.(JSON); ok {
+			passthroughArg()
+			return nil
+		} else if valuer, ok := v.(Interpolator); ok {
+			s, err := valuer.Interpolate()
+			if err == nil {
+				Dialect.WriteStringLiteral(buf, s)
+				return nil
+			}
+		} else if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return err
+			}
+			v = val
+			valueOfV = reflect.ValueOf(v)
+			kindOfV = valueOfV.Kind()
+		}
+
+		// dereference pointer values
 		if kindOfV == reflect.Ptr {
 			if valueOfV.IsNil() {
 				buf.WriteString("NULL")
@@ -203,7 +185,7 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 		} else if kindOfV == reflect.Struct {
 			if typeOfV := valueOfV.Type(); typeOfV == typeOfTime {
 				t := valueOfV.Interface().(time.Time)
-				Dialect.WriteFormattedTime(buf, t)
+				Dialect.WriteStringLiteral(buf, t.UTC().Format(timeFormat))
 			} else {
 				return ErrInvalidValue
 			}
@@ -250,19 +232,19 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 			}
 			buf.WriteRune(')')
 		} else {
-			passthroughArg(v)
+			passthroughArg()
 		}
 
 		return nil
 	}
 
-	lenSQL := len(sql)
+	lenSql := len(sql)
 	done := false
 	for i, r := range sql {
 		if accumulateDigits {
 			if '0' <= r && r <= '9' {
 				digits.WriteRune(r)
-				if i < lenSQL-1 {
+				if i < lenSql-1 {
 					continue
 				}
 				// last rune is part of a placeholder, fallthrough
@@ -270,14 +252,6 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 			}
 
 			digitsStr := digits.String()
-			// can be empty $ is followed by a non-digit
-			if digitsStr == "" {
-				buf.WriteRune('$')
-				buf.WriteRune(r)
-				accumulateDigits = false
-				continue
-			}
-
 			pos := 0
 			if len(digitsStr) > 2 {
 				pos, _ = strconv.Atoi(digitsStr)
@@ -295,12 +269,11 @@ func Interpolate(sql string, vals []interface{}) (string, []interface{}, error) 
 			accumulateDigits = false
 		}
 
-		if r == '$' && i < lenSQL-1 {
+		if r == '$' {
 			digits.Reset()
 			accumulateDigits = true
 			continue
 		}
-
 		buf.WriteRune(r)
 	}
 
@@ -313,4 +286,12 @@ func interpolate(builder Builder) (string, []interface{}, error) {
 		return Interpolate(sql, args)
 	}
 	return sql, args, nil
+}
+
+func mustInterpolate(builder Builder) (string, []interface{}) {
+	sql, args, err := interpolate(builder)
+	if err != nil {
+		logger.Error("mustInterpolate", "err", err, "sql", sql)
+	}
+	return sql, args
 }

@@ -1,19 +1,23 @@
+** The [legacy](https://github.com/mgutz/dat/tree/legacy) branch contains
+the original dat **
+
 # dat
 
 [GoDoc](https://godoc.org/github.com/mgutz/dat)
 
-`dat` (Data Access Toolkit) is a fast, lightweight Postgres library for Go.
+`dat` (Data Access Toolkit) is a fast, lightweight and intuitive Postgres
+library for Go.
 
-*   Focused on Postgres. See `Insect`, `Upsert`, `SelectDoc`, `QueryJSON`
+*   Focused on Postgres. See `Insect`, `Upsert`, `SelectDoc`, `QueryJSON`.
 
-*   Built on a solid foundation [sqlx](https://github.com/jmoiron/sqlx)
+*   Built on a solid foundation [sqlx](https://github.com/jmoiron/sqlx).
 
     ```go
     // child DB is *sqlx.DB
     DB.DB.Queryx(`SELECT * FROM users`)
     ```
 
-*   SQL and backtick friendly
+*   SQL and backtick friendly.
 
     ```go
     DB.SQL(`SELECT * FROM people LIMIT 10`).QueryStructs(&people)
@@ -92,9 +96,9 @@
 
 *   Nested transactions
 
-*   Per query timeout with database cancellation logic `pg_cancel_backend`
+*   SQL tracing
 
-*   SQL and slow query logging
+*   Slow query logging
 
 *   Performant
 
@@ -106,12 +110,8 @@
 
 Get it
 
-dat.v1 uses [glide](https://github.com/Masterminds/glide) package dependency manager. 
-Earlier builds relied on gopkg.in which at the time was as good a solution as any.
-Will move to `dep` once it is stable.
-
 ```sh
-glide get gopkg.in/mgutz/dat.v1/sqlx-runner
+go get -u gopkg.in/mgutz/dat.v1/sqlx-runner
 ```
 
 Use it
@@ -135,8 +135,10 @@ func init() {
         panic(err)
     }
 
-    // ensures the database can be pinged with an exponential backoff (15 min)
-    runner.MustPing(db)
+    err = db.Ping()
+    if err != nil {
+        panic("Could not ping database")
+    }
 
     // set to reasonable values for production
     db.SetMaxIdleConns(4)
@@ -241,31 +243,6 @@ DB.SQL("SELECT count(*) FROM posts WHERE title=$1", title).QueryScalar(&n)
 
 var ids []int64
 DB.SQL("SELECT id FROM posts", title).QuerySlice(&ids)
-```
-
-### Field Mapping
-
-**dat** DOES NOT map fields automatically like sqlx.
-You must explicitly set `db` struct tags in your types.
-
-Embedded fields are mapped breadth-first.
-
-```go
-type Realm struct {
-    RealmUUID string `db:"realm_uuid"`
-}
-type Group struct {
-    GroupUUID string `db:"group_uuid"`
-    *Realm
-}
-
-g := &Group{Realm: &Realm{"11"}, GroupUUID: "22"}
-
-sql, args := InsertInto("groups").Columns("group_uuid", "realm_uuid").Record(g).ToSQL()
-expected := `
-    INSERT INTO groups ("group_uuid", "realm_uuid")
-    VALUES ($1, $2)
-	`
 ```
 
 ### Blacklist and Whitelist
@@ -507,6 +484,7 @@ result, err := DB.
 result, err = DB.
     DeleteFrom("posts").
     Where("id = $1", otherPost.ID).
+    Limit(1).
     Exec()
 ```
 
@@ -565,13 +543,14 @@ from the underlying SQL driver's pool
 For one-off operations, use `DB` directly
 
 ```go
-err := DB.SQL(sql).QueryStruct(&post)
+err := DB.SQL(...).QueryStruct(&post)
 ```
 
 For multiple operations, create a `Tx` transaction.
 __`defer Tx.AutoCommit()` or `defer Tx.AutoRollback()` MUST be called__
 
 ```go
+
 func PostsIndex(rw http.ResponseWriter, r *http.Request) {
     tx, _ := DB.Begin()
     defer tx.AutoRollback()
@@ -596,7 +575,8 @@ func PostsIndex(rw http.ResponseWriter, r *http.Request) {
 }
 ```
 
-`DB` and `Tx` implement `runner.Connection` interface to keep code DRY
+`DB` and `Tx` implement `runner.Connection` interface to facilitate
+keeping code DRY
 
 ```
 func getUsers(conn runner.Connection) ([]*dto.Users, error) {
@@ -604,7 +584,7 @@ func getUsers(conn runner.Connection) ([]*dto.Users, error) {
         SELECT *
         FROM users
     `
-    var users []*dto.Users
+    var users dto.Users
     err := conn.SQL(sql).QueryStructs(&users)
     if err != nil {
         return err
@@ -613,7 +593,7 @@ func getUsers(conn runner.Connection) ([]*dto.Users, error) {
 }
 ```
 
-### Nested Transactions
+#### Nested Transactions
 
 Nested transaction logic is as follows:
 
@@ -635,7 +615,7 @@ func nested(conn runner.Connection) error {
     }
     defer tx.AutoRollback()
 
-    _, err := tx.SQL(`INSERT INTO users (email) values $1`, "me@home.com").Exec()
+    _, err := tx.SQL(`INSERT INTO users (email) values $1`, 'me@home.com').Exec()
     if err != nil {
         return err
     }
@@ -657,17 +637,6 @@ func top() {
     // top level commits the transaction
     tx.Commit()
 }
-```
-
-### Timeouts
-
-A timeout may be set on any `Query*` or `Exec` with the `Timeout` method. When a
-timeout is set, the query is run in a separate goroutine and should a timeout
-occur dat will cancel the query via Postgres' `pg_cancel_backend`.
-
-```go
-err := DB.Select("SELECT pg_sleep(1)").Timeout(1 * time.Millisecond).Exec()
-err == dat.ErrTimedout
 ```
 
 ### Dates
@@ -696,7 +665,8 @@ DB.SQL("UPDATE table SET updated_at = $1", CURRENT_TIMESTAMP)
 ```
 
 `UnsafeString` is exactly that, **UNSAFE**. If you must use it, create a
-constant and **NEVER** use `UnsafeString` directly as an argument like this
+constant and **NEVER** use `UnsafeString` directly as an argument. This
+is asking for a SQL injection attack
 
 ```go
 DB.SQL("UPDATE table SET updated_at = $1", dat.UnsafeString(someVar))
@@ -716,11 +686,31 @@ var ids []int64
 err = DB.Select("id").From("posts").QuerySlice(&ids)
 ```
 
+### Embedded structs
+
+```go
+// Columns are mapped to fields breadth-first
+type Post struct {
+    ID        int64      `db:"id"`
+    Title     string     `db:"title"`
+    User      *struct {
+        ID int64         `db:"user_id"`
+    }
+}
+
+var post Post
+err := DB.
+    Select("id, title, user_id").
+    From("posts").
+    Limit(1).
+    QueryStruct(&post)
+```
+
 ### Caching
 
 dat implements caching backed by an in-memory or Redis store. The in-memory store
 is not recommended for production use. Caching can cache any struct or primitive type that
-can be marshaled/unmarshaled cleanly with the json package due to Redis being a string
+can be marshaled/unmarhsaled cleanly with the json package due to Redis being a string
 value store.
 
 Time is especially problematic as JavaScript, Postgres and Go
@@ -751,11 +741,12 @@ b, err := DB.
     Cache("states", 365 * 24 * time.Hour, false).
     QueryJSON()
 
-// Without a key, the checksum of the query is used as the cache key.
-// In this example, the interpolated SQL  will contain their user_name
-// (if EnableInterpolation is true) effectively caching each user.
+// Cache states query for a year using the hash value of the SQL as the ID.
 //
-// cacheID == checksum("SELECT * FROM users WHERE user_name='mario'")
+// While this is not as efficient, the checksum has to be calculated
+// for each query, it is more flexible. In this example, the interpolated SQL
+// will contain ther user_name (if EnableInterpolation is true)
+// effectively caching each user.
 b, err := DB.
     SQL(`SELECT * FROM users WHERE user_name = $1`, user).
     Cache("", 365 * 24 *  time.Hour, false).
@@ -798,10 +789,11 @@ db.Exec(
 )
 ```
 
-is sent to the database with inlined args bypassing prepared statement logic in
-the lib/pq layer
+is sent to the database with inlined args bypassing
+prepared statement logic in the lib/pq layer.
 
-```sql
+sql
+```
 "INSERT INTO (a, b, c, d) VALUES (1, 2, 3, 4)"
 ```
 
@@ -818,3 +810,4 @@ for more details and SQL injection.
 ## LICENSE
 
 [The MIT License (MIT)](https://github.com/mgutz/dat/blob/master/LICENSE)
+

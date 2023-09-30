@@ -1,6 +1,6 @@
 package dat
 
-import "gopkg.in/mgutz/dat.v1/common"
+import "github.com/syreclabs/dat/common"
 
 // Expression holds a sub expression.
 type Expression struct {
@@ -18,9 +18,4 @@ func (exp *Expression) WriteRelativeArgs(buf common.BufferWriter, args *[]interf
 	remapPlaceholders(buf, exp.Sql, *pos)
 	*args = append(*args, exp.Args...)
 	*pos += int64(len(exp.Args))
-}
-
-// Expression implements Expressioner interface (used in Interpolate).
-func (exp *Expression) Expression() (string, []interface{}, error) {
-	return Interpolate(exp.Sql, exp.Args)
 }

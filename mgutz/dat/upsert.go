@@ -1,6 +1,10 @@
 package dat
 
-import "reflect"
+import (
+	"reflect"
+
+	"github.com/mgutz/str"
+)
 
 // UpsertBuilder contains the clauses for an INSERT statement
 type UpsertBuilder struct {
@@ -90,11 +94,22 @@ func (b *UpsertBuilder) ToSQL() (string, []interface{}) {
 
 	// reflect fields removing blacklisted columns
 	if b.record != nil && b.isBlacklist {
-		b.cols = reflectExcludeColumns(b.record, b.cols)
+		info := reflectFields(b.record)
+		lenFields := len(info.fields)
+		cols := []string{}
+		for i := 0; i < lenFields; i++ {
+			f := info.fields[i]
+			if str.SliceContains(b.cols, f.dbName) {
+				continue
+			}
+			cols = append(cols, f.dbName)
+		}
+		b.cols = cols
 	}
 	// reflect all fields
 	if b.record != nil && b.cols[0] == "*" {
-		b.cols = reflectColumns(b.record)
+		info := reflectFields(b.record)
+		b.cols = info.Columns()
 	}
 
 	if len(b.returnings) == 0 {
@@ -140,7 +155,7 @@ func (b *UpsertBuilder) ToSQL() (string, []interface{}) {
 	if b.record != nil {
 		ind := reflect.Indirect(reflect.ValueOf(b.record))
 		var err error
-		b.vals, err = valuesFor(ind.Type(), ind, b.cols)
+		b.vals, err = ValuesFor(ind.Type(), ind, b.cols)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -204,7 +219,7 @@ func (b *UpsertBuilder) ToSQL() (string, []interface{}) {
 
 // Where appends a WHERE clause to the statement for the given string and args
 // or map of column/value pairs
-func (b *UpsertBuilder) Where(whereSQLOrMap interface{}, args ...interface{}) *UpsertBuilder {
-	b.whereFragments = append(b.whereFragments, newWhereFragment(whereSQLOrMap, args))
+func (b *UpsertBuilder) Where(whereSqlOrMap interface{}, args ...interface{}) *UpsertBuilder {
+	b.whereFragments = append(b.whereFragments, newWhereFragment(whereSqlOrMap, args))
 	return b
 }

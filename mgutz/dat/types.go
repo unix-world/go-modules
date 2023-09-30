@@ -20,11 +20,6 @@ type Interpolator interface {
 	Interpolate() (string, error)
 }
 
-// Expressioner is an interface that returns raw SQL with possible arguments.
-type Expressioner interface {
-	Expression() (string, []interface{}, error)
-}
-
 // Value implements a valuer for compatibility
 func (u UnsafeString) Value() (driver.Value, error) {
 	panic("UnsafeStrings and its constants NOW, DEFAULT ... are disabled when EnableInterpolation==false")
@@ -35,6 +30,8 @@ const DEFAULT = UnsafeString("DEFAULT")
 
 // NOW SQL value
 const NOW = UnsafeString("NOW()")
+
+var timeFormat = "2006-01-02 15:04:05.000"
 
 // NullString is a type that can be null or a string
 type NullString struct {
@@ -86,15 +83,10 @@ func NullBoolFrom(v bool) NullBool {
 	return NullBool{sql.NullBool{Bool: v, Valid: true}}
 }
 
-// JSONFromString creates a JSON type from JSON encoded string.
-func JSONFromString(encoded string) JSON {
-	return []byte(encoded)
-}
-
 var nullString = []byte("null")
 
 // MarshalJSON correctly serializes a NullString to JSON
-func (n NullString) MarshalJSON() ([]byte, error) {
+func (n *NullString) MarshalJSON() ([]byte, error) {
 	if n.Valid {
 		j, e := json.Marshal(n.String)
 		return j, e
@@ -103,7 +95,7 @@ func (n NullString) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON correctly serializes a NullFloat64 to JSON
-func (n NullFloat64) MarshalJSON() ([]byte, error) {
+func (n *NullFloat64) MarshalJSON() ([]byte, error) {
 	if n.Valid {
 		j, e := json.Marshal(n.Float64)
 		return j, e
@@ -112,7 +104,7 @@ func (n NullFloat64) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON correctly serializes a NullInt64 to JSON
-func (n NullInt64) MarshalJSON() ([]byte, error) {
+func (n *NullInt64) MarshalJSON() ([]byte, error) {
 	if n.Valid {
 		j, e := json.Marshal(n.Int64)
 		return j, e
@@ -121,7 +113,7 @@ func (n NullInt64) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON correctly serializes a NullTime to JSON
-func (n NullTime) MarshalJSON() ([]byte, error) {
+func (n *NullTime) MarshalJSON() ([]byte, error) {
 	if n.Valid {
 		j, e := json.Marshal(n.Time)
 		return j, e
@@ -130,7 +122,7 @@ func (n NullTime) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON correctly serializes a NullBool to JSON
-func (n NullBool) MarshalJSON() ([]byte, error) {
+func (n *NullBool) MarshalJSON() ([]byte, error) {
 	if n.Valid {
 		j, e := json.Marshal(n.Bool)
 		return j, e
@@ -218,12 +210,9 @@ func NewJSON(any interface{}) (*JSON, error) {
 	return &j, nil
 }
 
-// MarshalJSON returns the j as the JSON encoding of j.
-func (j JSON) MarshalJSON() ([]byte, error) {
-	if j == nil {
-		return nullString, nil
-	}
-	return j, nil
+// MarshalJSON returns the *j as the JSON encoding of j.
+func (j *JSON) MarshalJSON() ([]byte, error) {
+	return *j, nil
 }
 
 // UnmarshalJSON sets *j to a copy of data
@@ -262,7 +251,7 @@ func (j *JSON) Scan(src interface{}) error {
 	default:
 		return errors.New("Incompatible type for JSON")
 	}
-	*j = append((*j)[0:0], source...)
+	*j = JSON(append((*j)[0:0], source...))
 	return nil
 }
 

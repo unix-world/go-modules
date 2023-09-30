@@ -3,6 +3,8 @@ package dat
 import (
 	"bytes"
 	"reflect"
+
+	"github.com/mgutz/str"
 )
 
 // InsertBuilder contains the clauses for an INSERT statement
@@ -105,11 +107,22 @@ func (b *InsertBuilder) ToSQL() (string, []interface{}) {
 
 	// reflect fields removing blacklisted columns
 	if lenRecords > 0 && b.isBlacklist {
-		b.cols = reflectExcludeColumns(b.records[0], b.cols)
+		info := reflectFields(b.records[0])
+		lenFields := len(info.fields)
+		cols := []string{}
+		for i := 0; i < lenFields; i++ {
+			f := info.fields[i]
+			if str.SliceContains(b.cols, f.dbName) {
+				continue
+			}
+			cols = append(cols, f.dbName)
+		}
+		b.cols = cols
 	}
 	// reflect all fields
 	if lenRecords > 0 && b.cols[0] == "*" {
-		b.cols = reflectColumns(b.records[0])
+		info := reflectFields(b.records[0])
+		b.cols = info.Columns()
 	}
 
 	var sql bytes.Buffer
@@ -149,7 +162,7 @@ func (b *InsertBuilder) ToSQL() (string, []interface{}) {
 		}
 
 		ind := reflect.Indirect(reflect.ValueOf(rec))
-		vals, err := valuesFor(ind.Type(), ind, b.cols)
+		vals, err := ValuesFor(ind.Type(), ind, b.cols)
 		if err != nil {
 			panic(err.Error())
 		}

@@ -3,6 +3,7 @@ package dat
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -13,7 +14,7 @@ import (
 
 	"github.com/mgutz/str"
 
-	"gopkg.in/mgutz/dat.v1/common"
+	"github.com/syreclabs/dat/common"
 )
 
 // NameMapping is the routine to use when mapping column names to struct properties
@@ -93,6 +94,15 @@ func writePlaceholder(buf common.BufferWriter, pos int) {
 	} else {
 		buf.WriteRune('$')
 		buf.WriteString(strconv.Itoa(pos))
+	}
+}
+
+func writePlaceholder64(buf common.BufferWriter, pos int64) {
+	if pos < maxLookup {
+		buf.WriteString(placeholderTab[pos])
+	} else {
+		buf.WriteRune('$')
+		buf.WriteString(strconv.FormatInt(pos, 10))
 	}
 }
 
@@ -274,8 +284,20 @@ func SQLSliceFromFile(filename string) ([]string, error) {
 	return SQLSliceFromString(string(text))
 }
 
+// getIdentifier
+func getIdentifier(i *int) string {
+	*i++
+	idx := *i
+	if idx < maxLookup {
+		return identifierTab[idx]
+	}
+	return fmt.Sprintf("dat%d", idx)
+}
+
+var reSprocLanguage = regexp.MustCompile(`language\s+\w+\s*;`)
+
 // ParseDir reads files in a directory "sproc_name"=>"sproc_body"
-func ParseDir(dir string, version string) error {
+func ParseDir(dir string, version string) {
 	walkFn := func(path string, fi os.FileInfo, err error) error {
 		if fi.IsDir() {
 			return nil
@@ -290,5 +312,5 @@ func ParseDir(dir string, version string) error {
 		return nil
 	}
 
-	return filepath.Walk(dir, walkFn)
+	filepath.Walk(dir, walkFn)
 }

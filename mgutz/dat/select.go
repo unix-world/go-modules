@@ -8,12 +8,11 @@ type SelectBuilder struct {
 	distinctColumns []string
 	isInterpolated  bool
 	columns         []string
-	fors            []string
 	table           string
 	whereFragments  []*whereFragment
 	groupBys        []string
 	havingFragments []*whereFragment
-	orderBys        []*whereFragment
+	orderBys        []string
 	limitCount      uint64
 	limitValid      bool
 	offsetCount     uint64
@@ -28,16 +27,6 @@ func NewSelectBuilder(columns ...string) *SelectBuilder {
 		return nil
 	}
 	return &SelectBuilder{columns: columns, isInterpolated: EnableInterpolation}
-}
-
-// Columns adds additional select columns to the builder.
-func (b *SelectBuilder) Columns(columns ...string) *SelectBuilder {
-	if len(columns) == 0 || columns[0] == "" {
-		logger.Error("Select requires 1 or more columns")
-		return nil
-	}
-	b.columns = append(b.columns, columns...)
-	return b
 }
 
 // Distinct marks the statement as a DISTINCT SELECT
@@ -59,12 +48,6 @@ func (b *SelectBuilder) From(from string) *SelectBuilder {
 	return b
 }
 
-// For adds FOR clause to SELECT.
-func (b *SelectBuilder) For(options ...string) *SelectBuilder {
-	b.fors = options
-	return b
-}
-
 // ScopeMap uses a predefined scope in place of WHERE.
 func (b *SelectBuilder) ScopeMap(mapScope *MapScope, m M) *SelectBuilder {
 	b.scope = mapScope.mergeClone(m)
@@ -81,8 +64,8 @@ func (b *SelectBuilder) Scope(sql string, args ...interface{}) *SelectBuilder {
 
 // Where appends a WHERE clause to the statement for the given string and args
 // or map of column/value pairs
-func (b *SelectBuilder) Where(whereSQLOrMap interface{}, args ...interface{}) *SelectBuilder {
-	b.whereFragments = append(b.whereFragments, newWhereFragment(whereSQLOrMap, args))
+func (b *SelectBuilder) Where(whereSqlOrMap interface{}, args ...interface{}) *SelectBuilder {
+	b.whereFragments = append(b.whereFragments, newWhereFragment(whereSqlOrMap, args))
 	return b
 }
 
@@ -93,14 +76,14 @@ func (b *SelectBuilder) GroupBy(group string) *SelectBuilder {
 }
 
 // Having appends a HAVING clause to the statement
-func (b *SelectBuilder) Having(whereSQLOrMap interface{}, args ...interface{}) *SelectBuilder {
-	b.havingFragments = append(b.havingFragments, newWhereFragment(whereSQLOrMap, args))
+func (b *SelectBuilder) Having(whereSqlOrMap interface{}, args ...interface{}) *SelectBuilder {
+	b.havingFragments = append(b.havingFragments, newWhereFragment(whereSqlOrMap, args))
 	return b
 }
 
 // OrderBy appends a column to ORDER the statement by
-func (b *SelectBuilder) OrderBy(whereSQLOrMap interface{}, args ...interface{}) *SelectBuilder {
-	b.orderBys = append(b.orderBys, newWhereFragment(whereSQLOrMap, args))
+func (b *SelectBuilder) OrderBy(ord string) *SelectBuilder {
+	b.orderBys = append(b.orderBys, ord)
 	return b
 }
 
@@ -170,18 +153,18 @@ func (b *SelectBuilder) ToSQL() (string, []interface{}) {
 	var placeholderStartPos int64 = 1
 	if b.scope != nil {
 		var where string
-		sql, args2 := b.scope.ToSQL(b.table)
+		sql, args := b.scope.ToSQL(b.table)
 		sql, where = splitWhere(sql)
 		buf.WriteString(sql)
 		if where != "" {
-			fragment := newWhereFragment(where, args2)
+			fragment := newWhereFragment(where, args)
 			b.whereFragments = append(b.whereFragments, fragment)
 		}
 	}
 
 	if len(b.whereFragments) > 0 {
 		buf.WriteString(" WHERE ")
-		writeAndFragmentsToSQL(buf, b.whereFragments, &args, &placeholderStartPos)
+		writeWhereFragmentsToSql(buf, b.whereFragments, &args, &placeholderStartPos)
 	}
 
 	if len(b.groupBys) > 0 {
@@ -196,12 +179,17 @@ func (b *SelectBuilder) ToSQL() (string, []interface{}) {
 
 	if len(b.havingFragments) > 0 {
 		buf.WriteString(" HAVING ")
-		writeAndFragmentsToSQL(buf, b.havingFragments, &args, &placeholderStartPos)
+		writeWhereFragmentsToSql(buf, b.havingFragments, &args, &placeholderStartPos)
 	}
 
 	if len(b.orderBys) > 0 {
 		buf.WriteString(" ORDER BY ")
-		writeCommaFragmentsToSQL(buf, b.orderBys, &args, &placeholderStartPos)
+		for i, s := range b.orderBys {
+			if i > 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(s)
+		}
 	}
 
 	if b.limitValid {
@@ -212,15 +200,6 @@ func (b *SelectBuilder) ToSQL() (string, []interface{}) {
 	if b.offsetValid {
 		buf.WriteString(" OFFSET ")
 		writeUint64(buf, b.offsetCount)
-	}
-
-	// add FOR clause
-	if len(b.fors) > 0 {
-		buf.WriteString(" FOR")
-		for _, s := range b.fors {
-			buf.WriteString(" ")
-			buf.WriteString(s)
-		}
 	}
 
 	return buf.String(), args

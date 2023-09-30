@@ -15,7 +15,7 @@ func NewCallBuilder(sproc string, args ...interface{}) *CallBuilder {
 		logger.Error("Invalid sproc name", "name", sproc)
 		return nil
 	}
-	return &CallBuilder{sproc: sproc, args: args, isInterpolated: EnableInterpolation}
+	return &CallBuilder{sproc: sproc, args: args}
 }
 
 // ToSQL serializes CallBuilder to a SQL string returning

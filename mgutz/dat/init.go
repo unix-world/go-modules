@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/mgutz/logxi"
+	"github.com/syreclabs/logxi/v1"
 )
 
-var logger logxi.Logger
+var logger log.Logger
 
 // Strict tells dat to raise errors
 var Strict = false
 
-// EnableInterpolation enables or disable interpolation
+// Whether to enable interpolation
 var EnableInterpolation = false
 
 // maxLookup is the max lookup index for predefined lookup tables
@@ -53,5 +53,5 @@ func init() {
 		identifierTab[i] = fmt.Sprintf("dat%d", i)
 	}
 
-	logger = logxi.New("dat")
+	logger = log.New("dat")
 }

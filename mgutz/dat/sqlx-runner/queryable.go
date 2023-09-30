@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"gopkg.in/mgutz/dat.v1"
+	"github.com/syreclabs/dat"
 )
 
 // Queryable is an object that can be queried.
@@ -23,7 +23,7 @@ func WrapSqlxExt(e sqlx.Ext) *Queryable {
 	}
 }
 
-// Call creates a new CallBuilder for the given sproc and args.
+// Call creates a new CallBulider for the given sproc and args.
 func (q *Queryable) Call(sproc string, args ...interface{}) *dat.CallBuilder {
 	b := dat.NewCallBuilder(sproc, args...)
 	b.Execer = NewExecer(q.runner, b)
@@ -51,9 +51,6 @@ func (q *Queryable) Exec(cmd string, args ...interface{}) (*dat.Result, error) {
 		return nil, logSQLError(err, "Exec", cmd, args)
 	}
 	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return nil, logSQLError(err, "Exec", cmd, args)
-	}
 	return &dat.Result{RowsAffected: rowsAffected}, nil
 }
 
