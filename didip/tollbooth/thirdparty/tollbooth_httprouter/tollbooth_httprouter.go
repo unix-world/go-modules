@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/syreclabs/tollbooth"
-	"github.com/syreclabs/tollbooth/config"
+	"github.com/unix-world/go-modules/didip/tollbooth"
+	"github.com/unix-world/go-modules/didip/tollbooth/config"
 )
 
 // RateLimit is a rate limiting middleware

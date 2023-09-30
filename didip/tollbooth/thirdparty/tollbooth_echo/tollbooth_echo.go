@@ -3,10 +3,10 @@ package tollbooth_echo
 import (
 	"strings"
 
-	"github.com/syreclabs/tollbooth"
-	"github.com/syreclabs/tollbooth/config"
-	"github.com/syreclabs/tollbooth/errors"
-	"github.com/syreclabs/tollbooth/libstring"
+	"github.com/unix-world/go-modules/didip/tollbooth"
+	"github.com/unix-world/go-modules/didip/tollbooth/config"
+	"github.com/unix-world/go-modules/didip/tollbooth/errors"
+	"github.com/unix-world/go-modules/didip/tollbooth/libstring"
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/engine"
 )

@@ -3,8 +3,8 @@ package tollbooth_chi
 import (
 	"net/http"
 
-	"github.com/syreclabs/tollbooth"
-	"github.com/syreclabs/tollbooth/config"
+	"github.com/unix-world/go-modules/didip/tollbooth"
+	"github.com/unix-world/go-modules/didip/tollbooth/config"
 )
 
 func LimitHandler(limiter *config.Limiter) func(http.Handler) http.Handler {

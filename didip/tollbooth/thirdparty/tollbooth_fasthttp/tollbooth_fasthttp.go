@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/syreclabs/tollbooth"
-	"github.com/syreclabs/tollbooth/config"
-	"github.com/syreclabs/tollbooth/errors"
+	"github.com/unix-world/go-modules/didip/tollbooth"
+	"github.com/unix-world/go-modules/didip/tollbooth/config"
+	"github.com/unix-world/go-modules/didip/tollbooth/errors"
 	"github.com/valyala/fasthttp"
 )
 

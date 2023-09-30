@@ -3,8 +3,8 @@ package tollbooth_negroni
 import (
 	"net/http"
 
-	"github.com/syreclabs/tollbooth"
-	"github.com/syreclabs/tollbooth/config"
+	"github.com/unix-world/go-modules/didip/tollbooth"
+	"github.com/unix-world/go-modules/didip/tollbooth/config"
 	"github.com/urfave/negroni"
 )
 

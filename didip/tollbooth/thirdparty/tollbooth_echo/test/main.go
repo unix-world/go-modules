@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/syreclabs/tollbooth"
-	"github.com/syreclabs/tollbooth/thirdparty/tollbooth_echo"
+	"github.com/unix-world/go-modules/didip/tollbooth"
+	"github.com/unix-world/go-modules/didip/tollbooth/thirdparty/tollbooth_echo"
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/engine/standard"
 )
