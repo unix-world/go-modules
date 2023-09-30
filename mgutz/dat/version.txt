@@ -1,0 +1,19 @@
+@head.20170328.20180130
+
+Go 1.11 or later
+
+github.com/mgutz/dat
+
+# refactored by unixman as:
+github.com/unix-world/go-modules/mgutz/dat
+
+# fix by unixman:
+	* @ from syreclabs: PLUS: 6 revisions # 20180130
+		+ ce728861c2ee73a56c650cee0cb53b1517e02ec0 @ 20160109
+		+ eb6ffc1775c3e5b350fe407ad39ae959ef1ec131 @ 20160330
+		+ 8f10603150f740330674e6838716d092cd06c58e @ 20160617
+		+ 2ce98fef8527ee42375ece29ddc5761eac35ca5f @ 20161104
+		+ cb16ec73f907976f3a34a5dbcd52f1f727059ff6 @ 20170615
+		+ 5ff6604342c0cfa6db7278a25ce8ccbc221bbe35 @ 20180130
+	* @ syreclabs BEHIND mgutz: 1 revision # 20180130
+		- 073714cebc323de7a4b7dda07163086edbdb6a5c @ 20160602
