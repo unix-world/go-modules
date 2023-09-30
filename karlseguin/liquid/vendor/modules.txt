@@ -1,0 +1,8 @@
+# github.com/karlseguin/bytepool v3.0.4+incompatible
+## explicit
+github.com/karlseguin/bytepool
+# github.com/karlseguin/expect v1.0.8
+## explicit; go 1.14
+# github.com/karlseguin/gspec v0.0.0-20141019042306-990367bbbe63
+## explicit
+github.com/karlseguin/gspec
