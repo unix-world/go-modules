@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/magicwrighter/tollbooth/thirdparty/tollbooth_fasthttp"
+	"github.com/unix-world/go-modules/didip/tollbooth/thirdparty/tollbooth_fasthttp"
 	"github.com/unix-world/go-modules/didip/tollbooth"
 	"github.com/valyala/fasthttp"
 )
