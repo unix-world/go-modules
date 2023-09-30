@@ -1,0 +1,12 @@
+@head.20170310.20170530
+
+Go 1.11 or later
+
+github.com/didip/tollbooth
+
+# refactored by unixman as:
+github.com/unix-world/go-modules/didip/tollbooth
+
+# fix by unixman:
+	* @ syreclabs BEHIND didip: 1 revision # 20170530
+		- 4f043f98464c8a3f0a49c270c184d7eea1a279df @ 20170530
