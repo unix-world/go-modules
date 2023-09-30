@@ -1,8 +1,9 @@
 package liquid
 
 import (
-	"github.com/karlseguin/liquid/core"
 	"io"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 type Literal struct {

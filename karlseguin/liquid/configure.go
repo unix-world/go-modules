@@ -2,7 +2,7 @@ package liquid
 
 import (
 	"github.com/karlseguin/bytepool"
-	"github.com/karlseguin/liquid/core"
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 var (

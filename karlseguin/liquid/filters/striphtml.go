@@ -1,8 +1,9 @@
 package filters
 
 import (
-	"github.com/karlseguin/liquid/core"
 	"regexp"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 var stripHtml = &ReplacePattern{regexp.MustCompile("(?i)<script.*?</script>|<!--.*?-->|<style.*?</style>|<.*?>"), ""}

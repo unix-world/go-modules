@@ -3,8 +3,9 @@ package tags
 import (
 	"errors"
 	"fmt"
-	"github.com/karlseguin/liquid/core"
 	"io"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 var (

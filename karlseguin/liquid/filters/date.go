@@ -2,8 +2,9 @@ package filters
 
 import (
 	"fmt"
-	"github.com/karlseguin/liquid/core"
 	"time"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 var (

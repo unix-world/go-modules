@@ -1,7 +1,7 @@
 package filters
 
 import (
-	"github.com/karlseguin/liquid/core"
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 func ReplaceFirstFactory(parameters []core.Value) core.Filter {

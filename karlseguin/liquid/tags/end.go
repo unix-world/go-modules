@@ -1,8 +1,9 @@
 package tags
 
 import (
-	"github.com/karlseguin/liquid/core"
 	"io"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 // a generic end tag

@@ -1,9 +1,10 @@
 package filters
 
 import (
-	"github.com/karlseguin/gspec"
-	"github.com/karlseguin/liquid/core"
 	"testing"
+
+	"github.com/karlseguin/gspec"
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 func TestDefaultWithBuiltinValue(t *testing.T) {

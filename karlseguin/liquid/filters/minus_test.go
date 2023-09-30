@@ -1,10 +1,11 @@
 package filters
 
 import (
-	"github.com/karlseguin/gspec"
-	"github.com/karlseguin/liquid/core"
 	"testing"
 	"time"
+
+	"github.com/karlseguin/gspec"
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 func TestMinusAnIntToAnInt(t *testing.T) {

@@ -2,8 +2,9 @@ package liquid
 
 import (
 	"fmt"
-	"github.com/karlseguin/liquid/core"
-	"github.com/karlseguin/liquid/tags"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
+	"github.com/unix-world/go-modules/karlseguin/liquid/tags"
 )
 
 type TagFactory func(*core.Parser, *core.Configuration) (core.Tag, error)

@@ -1,8 +1,8 @@
 package liquid
 
 import (
-	"github.com/karlseguin/liquid/core"
-	"github.com/karlseguin/liquid/filters"
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
+	"github.com/unix-world/go-modules/karlseguin/liquid/filters"
 )
 
 func init() {

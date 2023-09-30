@@ -2,8 +2,9 @@ package filters
 
 import (
 	"bytes"
-	"github.com/karlseguin/liquid/core"
 	"strings"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 // Creates a upcase filter

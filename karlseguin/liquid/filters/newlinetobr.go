@@ -1,8 +1,9 @@
 package filters
 
 import (
-	"github.com/karlseguin/liquid/core"
 	"regexp"
+
+	"github.com/unix-world/go-modules/karlseguin/liquid/core"
 )
 
 var newLinesToBr = &ReplacePattern{regexp.MustCompile("(\n\r|\n|\r)"), "<br />\n"}
