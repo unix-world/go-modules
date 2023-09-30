@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/syreclabs/dat"
-	"github.com/syreclabs/dat/kvs"
+	"github.com/unix-world/go-modules/mgutz/dat"
+	"github.com/unix-world/go-modules/mgutz/dat/kvs"
 )
 
 // database is the interface for sqlx's DB or Tx against which

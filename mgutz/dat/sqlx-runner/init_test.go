@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/syreclabs/dat"
-	"github.com/syreclabs/dat/kvs"
-	"github.com/syreclabs/dat/postgres"
+	"github.com/unix-world/go-modules/mgutz/dat"
+	"github.com/unix-world/go-modules/mgutz/dat/kvs"
+	"github.com/unix-world/go-modules/mgutz/dat/postgres"
 )
 
 var testDB *DB

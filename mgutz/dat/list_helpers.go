@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/syreclabs/dat/common"
+	"github.com/unix-world/go-modules/mgutz/dat/common"
 )
 
 var bufPool = common.NewBufferPool()

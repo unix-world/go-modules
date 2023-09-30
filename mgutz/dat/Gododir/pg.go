@@ -9,8 +9,8 @@ import (
 
 	"github.com/mgutz/ansi"
 	"github.com/mgutz/str"
-	"github.com/syreclabs/dat"
-	"github.com/syreclabs/dat/sqlx-runner"
+	"github.com/unix-world/go-modules/mgutz/dat"
+	"github.com/unix-world/go-modules/mgutz/dat/sqlx-runner"
 	. "gopkg.in/godo.v2"
 	"gopkg.in/godo.v2/util"
 )

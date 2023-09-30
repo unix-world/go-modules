@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/syreclabs/dat/common"
+	"github.com/unix-world/go-modules/mgutz/dat/common"
 )
 
 // Eq is a map column -> value pairs which must be matched in a query

@@ -1,6 +1,6 @@
 package runner
 
-import "github.com/syreclabs/dat"
+import "github.com/unix-world/go-modules/mgutz/dat"
 
 type Team struct {
 	ID        int64  `db:"id"`

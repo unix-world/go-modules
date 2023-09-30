@@ -1,6 +1,6 @@
 package dat
 
-import "github.com/syreclabs/dat/common"
+import "github.com/unix-world/go-modules/mgutz/dat/common"
 
 // Expression holds a sub expression.
 type Expression struct {

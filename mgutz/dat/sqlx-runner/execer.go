@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/syreclabs/dat"
+	"github.com/unix-world/go-modules/mgutz/dat"
 )
 
 // Execer executes queries against a database.

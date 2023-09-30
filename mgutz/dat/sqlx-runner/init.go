@@ -3,10 +3,10 @@ package runner
 import (
 	"time"
 
-	"github.com/syreclabs/dat"
-	"github.com/syreclabs/dat/kvs"
-	"github.com/syreclabs/dat/postgres"
-	"github.com/syreclabs/logxi/v1"
+	"github.com/unix-world/go-modules/mgutz/dat"
+	"github.com/unix-world/go-modules/mgutz/dat/kvs"
+	"github.com/unix-world/go-modules/mgutz/dat/postgres"
+	"github.com/mgutz/logxi/v1"
 )
 
 var logger log.Logger

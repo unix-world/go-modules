@@ -14,7 +14,7 @@ import (
 
 	"github.com/mgutz/str"
 
-	"github.com/syreclabs/dat/common"
+	"github.com/unix-world/go-modules/mgutz/dat/common"
 )
 
 // NameMapping is the routine to use when mapping column names to struct properties

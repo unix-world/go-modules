@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"hash/fnv"
 
-	"github.com/syreclabs/dat"
+	"github.com/unix-world/go-modules/mgutz/dat"
 )
 
 // MustCreateMetaTable creates the dat__meta table or panics.

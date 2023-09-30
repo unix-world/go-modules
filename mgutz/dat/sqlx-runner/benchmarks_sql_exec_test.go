@@ -3,7 +3,7 @@ package runner
 import (
 	"testing"
 
-	"github.com/syreclabs/dat"
+	"github.com/unix-world/go-modules/mgutz/dat"
 )
 
 // These benchmarks compare the time to excute an interpolated SQL

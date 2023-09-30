@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/syreclabs/dat"
-	"github.com/syreclabs/dat/common"
-	"github.com/syreclabs/dat/postgres"
+	"github.com/unix-world/go-modules/mgutz/dat"
+	"github.com/unix-world/go-modules/mgutz/dat/common"
+	"github.com/unix-world/go-modules/mgutz/dat/postgres"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 

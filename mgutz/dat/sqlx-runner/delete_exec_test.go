@@ -3,7 +3,7 @@ package runner
 import (
 	"testing"
 
-	"github.com/syreclabs/dat"
+	"github.com/unix-world/go-modules/mgutz/dat"
 	"gopkg.in/stretchr/testify.v1/assert"
 )
 
