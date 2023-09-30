@@ -1,0 +1,12 @@
+@head.20150126.20180510
+
+Go 1.11 or later
+
+github.com/karlseguin/liquid
+
+# refactored by unixman as:
+github.com/unix-world/go-modules/karlseguin/liquid
+
+# fix by unixman:
+	* @ syreclabs AHEAD karlseguin: 1 revision # 20180510
+		- af4d16c51256016876bf8420d75ff8f53036078b @ 20180510
