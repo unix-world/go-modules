@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	schema "github.com/unix-world/smartgoext/schemaform"
+	schema "github.com/unix-world/smartgoext/web-http/schemaform"
 )
 
 const (

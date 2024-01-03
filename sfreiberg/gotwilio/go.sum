@@ -4,6 +4,6 @@ github.com/google/go-querystring v1.1.0 h1:AnCroh3fv4ZBgVIf1Iwtovgjaw/GiKJo8M8yD
 github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
 github.com/unix-world/smartgo v0.0.0-20240103203448-bac7953ce3a4 h1:YC/59Pi+hsYBvPKnhr4b+Elz1zsHY5Z0zshqbB0pjr8=
 github.com/unix-world/smartgo v0.0.0-20240103203448-bac7953ce3a4/go.mod h1:pyLt9A2TGjH9hkVbIOE3zf0AObCAGEMlhHiLbZuwA9s=
-github.com/unix-world/smartgoext v0.0.0-20231129044031-298206fc3546 h1:LS/MlUUaNe9lF9kiNoO9ionJZsQaOF94IxF2bQwIZbI=
-github.com/unix-world/smartgoext v0.0.0-20231129044031-298206fc3546/go.mod h1:CevHEZbsRW5Lum8siFHxxjMD7XPYp+3EO44QFX6zJ9k=
+github.com/unix-world/smartgoext v0.0.0-20240103203804-3cbae9511c91 h1:V5YXFzbuWgzJYcnXawxiSY77HMTjcno6fHm0oErxz2Q=
+github.com/unix-world/smartgoext v0.0.0-20240103203804-3cbae9511c91/go.mod h1:CevHEZbsRW5Lum8siFHxxjMD7XPYp+3EO44QFX6zJ9k=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
