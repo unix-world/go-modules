@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/unix-world/smartgo/web/jwt"
 )
 
 // AccessToken holds everything required to

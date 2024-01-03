@@ -1,9 +1,10 @@
-# github.com/golang-jwt/jwt v3.2.2+incompatible
-## explicit
-github.com/golang-jwt/jwt
 # github.com/google/go-querystring v1.1.0
 ## explicit; go 1.10
 github.com/google/go-querystring/query
+# github.com/unix-world/smartgo v0.0.0-20240103203448-bac7953ce3a4
+## explicit; go 1.19
+github.com/unix-world/smartgo/crypto/sha3
+github.com/unix-world/smartgo/web/jwt
 # github.com/unix-world/smartgoext v0.0.0-20231129044031-298206fc3546
 ## explicit; go 1.19
 github.com/unix-world/smartgoext/schemaform
