@@ -8,7 +8,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lib/pq"
+	pq "github.com/unix-world/smartgo/db/lib-pq"
 )
 
 // UnsafeString is interpolated as an unescaped and unquoted value and should

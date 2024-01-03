@@ -3,7 +3,7 @@ package kvs
 import (
 	"time"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/unix-world/smartgo/db/redigo/redis"
 )
 
 func newRedisPool(host, password string) *redis.Pool {

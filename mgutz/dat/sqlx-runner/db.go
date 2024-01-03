@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/unix-world/smartgoext/db/sqlx"
 	"github.com/unix-world/go-modules/mgutz/dat"
 )
 

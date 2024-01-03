@@ -1,6 +1,6 @@
-@head.20170328.20180130
+@head.20170328.20180130+20240103.2348
 
-Go 1.11 or later
+Go 1.19 or later
 
 github.com/mgutz/dat
 

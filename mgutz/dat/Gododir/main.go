@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	_ "github.com/lib/pq"
+	_ "github.com/unix-world/smartgo/db/lib-pq"
 	do "gopkg.in/godo.v2"
 )
 
