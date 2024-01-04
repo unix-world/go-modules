@@ -7,8 +7,6 @@ require (
 	github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab
 	github.com/mgutz/str v1.2.0
 	github.com/pmylund/go-cache v2.1.0+incompatible
-	github.com/unix-world/smartgo v0.0.0-20240103203448-bac7953ce3a4
-	github.com/unix-world/smartgoext v0.0.0-20240103203804-3cbae9511c91
 	gopkg.in/godo.v2 v2.0.9
 )
 
